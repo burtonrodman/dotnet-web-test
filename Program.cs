@@ -1,3 +1,5 @@
+using System.Net;
+
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
@@ -7,6 +9,11 @@ app.MapGet("/", () =>
     var currentMachine = Environment.MachineName;
     var dotnetVer = Environment.Version;
     var isAzure = !string.IsNullOrEmpty(siteName);
+    
+    var encodedSiteName = WebUtility.HtmlEncode(siteName ?? "Running Locally");
+    var encodedMachine = WebUtility.HtmlEncode(currentMachine);
+    var encodedVersion = WebUtility.HtmlEncode(dotnetVer.ToString());
+    var encodedPlatform = WebUtility.HtmlEncode(isAzure ? "Azure App Service" : "Local Machine");
     
     var htmlContent = "<!DOCTYPE html><html><head><meta charset='utf-8'><title>App Service Test</title>";
     htmlContent += "<style>";
@@ -21,13 +28,13 @@ app.MapGet("/", () =>
     htmlContent += "</style></head><body><div class='main-card'>";
     htmlContent += "<h2>Web Application Status</h2>";
     htmlContent += "<div class='data-row'><div class='data-label'>Service Name</div>";
-    htmlContent += $"<div class='data-value'>{(siteName ?? "Running Locally")}</div></div>";
+    htmlContent += $"<div class='data-value'>{encodedSiteName}</div></div>";
     htmlContent += "<div class='data-row'><div class='data-label'>Machine Identifier</div>";
-    htmlContent += $"<div class='data-value'>{currentMachine}</div></div>";
+    htmlContent += $"<div class='data-value'>{encodedMachine}</div></div>";
     htmlContent += "<div class='data-row'><div class='data-label'>Framework Version</div>";
-    htmlContent += $"<div class='data-value'>.NET {dotnetVer}</div></div>";
+    htmlContent += $"<div class='data-value'>.NET {encodedVersion}</div></div>";
     htmlContent += "<div class='data-row'><div class='data-label'>Hosting Platform</div>";
-    htmlContent += $"<div class='data-value'>{(isAzure ? "Azure App Service" : "Local Machine")}</div></div>";
+    htmlContent += $"<div class='data-value'>{encodedPlatform}</div></div>";
     htmlContent += "<div class='footer-msg'>Application operational and responding</div>";
     htmlContent += "</div></body></html>";
     
